@@ -197,10 +197,14 @@ def coerce_arraylike(x):
     and objects unchanged
     """
     if isinstance(x, (list, tuple, Series)) or hasattr(x, '__array__'):
-        if np.isrealobj(x):
-            return np.asarray(x, dtype=np.float64)
-        if np.iscomplexobj(x):
-            return np.asarray(x, dtype=np.complex128)
+        try:
+            if np.isrealobj(x):
+                return np.asarray(x, dtype=np.float64)
+            if np.iscomplexobj(x):
+                return np.asarray(x, dtype=np.complex128)
+        # Exception hit for collections of objects not sensibly cast as floats
+        except ValueError: 
+            return x
     return x
 
 
